@@ -398,7 +398,7 @@ namespace Juego
 						assignKeys[DOWN] = true;
 						break;
 					case 10:
-						assignKeys[GRAVITY] = true;
+						assignKeys[REVERSE] = true;
 						break;
 					}
 					buttonsSettings[i].selected = false;
@@ -442,7 +442,7 @@ namespace Juego
 						buttonSelect = i;
 						if(assignKeys[UP]) buttonsSettings[i].defaultColor = WHITE;
 						else if (assignKeys[DOWN]) buttonsSettings[i].defaultColor = WHITE;
-						else if (assignKeys[GRAVITY]) buttonsSettings[i].defaultColor = WHITE;
+						else if (assignKeys[REVERSE]) buttonsSettings[i].defaultColor = WHITE;
 						else buttonsSettings[i].defaultColor = GREEN;
 						
 						buttonsSettings[i].selected = true;

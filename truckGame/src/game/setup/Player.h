@@ -14,13 +14,6 @@ namespace Juego
 		Vector2 centre;
 		bool isAlive;
 		bool inputActive;
-		//bool isPlayerStickedOnWall;
-		//bool isPlayerStickedOnWallY;
-		//bool isPlayerStickedOnWall2;
-		//bool isPlayerStickedOnWall2Y;
-		//bool isInvertedGravityY;
-		//bool isInvertedGravityX;
-		//bool activatedGravity;
 		Color textureTint;
 	};
 
@@ -32,6 +25,14 @@ namespace Juego
 	};
 
 	extern cube player;
+	extern cube playerhitbox;
+	extern cube playerfront;
+	extern int lastBoxCollected;
+
+	//extern float garbageAccelerationLeft;
+	//extern float garbageAccelerationRight;
+	//extern float garbageAccelerationUp;
+	//extern float garbageAccelerationDown;
 
 	namespace Gameplay_Section
 	{

@@ -17,7 +17,7 @@ namespace Juego
 	{
 		UP = 8,
 		RIGHT,
-		GRAVITY,
+		REVERSE,
 		DOWN,
 		LEFT,
 		MAX

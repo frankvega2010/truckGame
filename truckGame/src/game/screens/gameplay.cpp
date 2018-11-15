@@ -28,6 +28,8 @@ namespace Juego
 	static bool isButtonSoundPlaying = false;
 	static int buttonSelectSaveNumber = 0;
 
+	static int garbagePoints = 0;
+
 	namespace Gameplay_Section
 	{
 		static void createPauseButtons()
@@ -218,6 +220,40 @@ namespace Juego
 			if (gameON)
 			{		
 				playerUpdate();
+				for (int i = 0; i < maxGarbageBoxes; i++)
+				{
+					if (garbageBox[i].isOnPlayer)
+					{
+						garbageBox[i].pos.x = playerhitbox.position.x + (playerhitbox.size.x / 2) - (garbageBox[i].size.x / 2);
+						garbageBox[i].pos.y = playerhitbox.position.y + (playerhitbox.size.y / 2) - (garbageBox[i].size.y / 2);
+					}
+					else if (!(garbageBox[i].isOnPlayer))
+					{
+						//garbageAccelerationUp = playerAccelerationDown;
+						garbageBox[i].pos.x += garbageBox[i].AccelerationRight * GetFrameTime();
+						garbageBox[i].pos.x -= garbageBox[i].AccelerationLeft * GetFrameTime();
+						garbageBox[i].pos.y += garbageBox[i].AccelerationDown * GetFrameTime();
+						garbageBox[i].pos.y -= garbageBox[i].AccelerationUp * GetFrameTime();
+					}
+
+					if (CheckCollisionRecs({ garbageBox[i].pos.x,garbageBox[i].pos.y,garbageBox[i].size.x,garbageBox[i].size.y }, { obstacles[obDumpster].pos.x ,obstacles[obDumpster].pos.y,obstacles[obDumpster].size.x,obstacles[obDumpster].size.y }) && garbageBox[i].isAlive)
+					{
+						garbageBox[i].isAlive = false;
+						garbagePoints++;	
+					}
+
+					if (!(garbageBox[i].isAlive))
+					{
+						garbageBox[i].size.x = 0;
+						garbageBox[i].size.y = 0;
+					}
+				}
+
+				if (garbageBoxesCollected < 0)
+				{
+					garbageBoxesCollected = 0;
+				}
+				
 			}
 			else if (gamePaused)
 			{
@@ -270,12 +306,19 @@ namespace Juego
 		{
 			DrawLevel();
 			playerDraw();
-			
+
+			for (int i = 0; i < maxGarbageBoxes; i++)
+			{
+				DrawRectangle(garbageBox[i].pos.x, garbageBox[i].pos.y, garbageBox[i].size.x, garbageBox[i].size.y, garbageBox[i].color);
+			}
 
 			DrawRectangleLines(pauseButton.position.x, pauseButton.position.y, pauseButton.width, pauseButton.height, pauseButton.defaultColor);
 
 			//DrawTextEx(sideFont, FormatText("Targets:%i", targetsLeft), { 20, 20 }, defaultFontSize / 1.5f, 1.0f, GREEN);
-
+			//garbagePoints
+			DrawTextEx(sideFont, FormatText("Collected:%i", garbageBoxesCollected), { 20, 15 }, defaultFontSize / 1.5f, 1.0f, RED);
+			DrawTextEx(sideFont, FormatText("Points:%i", garbagePoints), {600, 15 }, defaultFontSize / 1.5f, 1.0f, RED);
+			//DrawTextEx(sideFont, FormatText("Rotation:%i", player.rotation), { 20, 20 }, defaultFontSize / 1.5f, 1.0f, RED);
 			DrawTextEx(mainFont,"II", { pauseButton.position.x + 13, pauseButton.position.y + 2 }, defaultFontSize/1.4f, 1.0f, pauseButton.defaultColor);
 			
 
@@ -305,6 +348,8 @@ namespace Juego
 			buttonDistance = 0;
 			gameON = true;
 			timerON = true;
+			garbageBoxesCollected = 0;
+			garbagePoints = 0;
 			//targetsLeft = 50;
 		}
 

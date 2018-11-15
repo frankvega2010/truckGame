@@ -11,8 +11,11 @@ namespace Juego
 	obstacle obstacles[maxObstacles];
 	obstacle spikes[maxSpikes];
 	obstacle exit;
+	obstacle garbageBox[maxGarbageBoxes];
+	obstacle dumpster;
 
 	int currentLevel = 0;
+	int garbageBoxesCollected = 0;
 
 	namespace Gameplay_Section
 	{
@@ -65,6 +68,46 @@ namespace Juego
 			{
 			case 0:
 			{
+
+				for (int i = 0; i < maxGarbageBoxes; i++)
+				{
+					garbageBox[i].pos.x = (float)screenWidth / 2;
+					garbageBox[i].pos.y = screenHeight / 2;
+					garbageBox[i].size.x = 30;
+					garbageBox[i].size.y = 30;
+					garbageBox[i].speed = 0;
+					garbageBox[i].isAlive = true;
+					garbageBox[i].isOnPlayer = false;
+					garbageBox[i].alreadyOnPlayer = false;
+					garbageBox[i].color = BLACK;
+					garbageBox[i].AccelerationRight = 0;
+					garbageBox[i].AccelerationLeft = 0;
+					garbageBox[i].AccelerationUp = 0;
+					garbageBox[i].AccelerationDown = 0;
+					garbageBox[i].moveDown = false;
+					garbageBox[i].moveUp = false;
+					garbageBox[i].moveLeft = false;
+					garbageBox[i].moveRight = false;
+				}
+
+				garbageBox[0].pos.x = (float)screenWidth / 2;
+				garbageBox[0].pos.y = screenHeight / 2;
+
+				garbageBox[1].pos.x = (float)screenWidth / 4;
+				garbageBox[1].pos.y = screenHeight / 2;
+
+				garbageBox[2].pos.x = (float)screenWidth / 1.5f;
+				garbageBox[2].pos.y = screenHeight / 2;
+
+				garbageBox[3].pos.x = (float)screenWidth / 4;
+				garbageBox[3].pos.y = screenHeight / 1.2f;
+
+				garbageBox[4].pos.x = (float)screenWidth / 2;
+				garbageBox[4].pos.y = screenHeight / 1.2f;
+
+				garbageBox[5].pos.x = (float)screenWidth / 1.5f;
+				garbageBox[5].pos.y = screenHeight / 1.2f;
+
 				obstacles[obMiddleSquare].pos.x = (float)screenWidth / 6;
 				obstacles[obMiddleSquare].pos.y = screenHeight / 4;
 				obstacles[obMiddleSquare].size.x = 250;
@@ -96,6 +139,14 @@ namespace Juego
 				obstacles[obMiddleSquare4].speed = 0;
 				obstacles[obMiddleSquare4].isAlive = true;
 				obstacles[obMiddleSquare4].color = BLACK;
+
+				obstacles[obDumpster].pos.x = (float)screenWidth / 26;
+				obstacles[obDumpster].pos.y = screenHeight / 2.2f;
+				obstacles[obDumpster].size.x = 90;
+				obstacles[obDumpster].size.y = 100;
+				obstacles[obDumpster].speed = 0;
+				obstacles[obDumpster].isAlive = true;
+				obstacles[obDumpster].color = BLUE;
 			}
 			break;
 			case 1:
@@ -249,7 +300,9 @@ namespace Juego
 		{
 			DrawRectangle(obBackground.pos.x, obBackground.pos.y, obBackground.size.x, obBackground.size.y, obBackground.color);
 			DrawRectangle(exit.pos.x, exit.pos.y, exit.size.x, exit.size.y, exit.color);
-			
+			DrawRectangle(dumpster.pos.x, dumpster.pos.y, dumpster.size.x, dumpster.size.y, dumpster.color);
+			//
+
 			for (int i = 0; i < maxObstacles; i++)
 			{
 				DrawRectangle(obstacles[i].pos.x, obstacles[i].pos.y, obstacles[i].size.x, obstacles[i].size.y, obstacles[i].color);
@@ -259,6 +312,8 @@ namespace Juego
 			{
 				DrawRectangle(spikes[i].pos.x, spikes[i].pos.y, spikes[i].size.x, spikes[i].size.y, spikes[i].color);
 			}
+
+			
 
 			if (currentLevel > 2)
 			{

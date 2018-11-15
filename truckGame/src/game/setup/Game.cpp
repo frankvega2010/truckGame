@@ -85,7 +85,7 @@ namespace Juego
 		playerKeys[DOWN] = KEY_DOWN;
 		playerKeys[LEFT] = KEY_LEFT;
 		playerKeys[RIGHT] = KEY_RIGHT;
-		playerKeys[GRAVITY] = KEY_SPACE;
+		playerKeys[REVERSE] = KEY_SPACE;
 
 		#ifdef AUDIO
 		InitAudioDevice();

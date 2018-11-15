@@ -15,13 +15,25 @@ namespace Juego
 	static float playerAccelerationUp = 0;
 	static float playerAccelerationDown = 0;
 
+	//float garbageAccelerationLeft = 0;
+	//float garbageAccelerationRight = 0;
+	//float garbageAccelerationUp = 0;
+	//float garbageAccelerationDown = 0;
+
 	static int collisionFix = 0;
 	static int collisionFix2 = 0;
+	static bool currentlyTouching = false;
 
 	bool moveRight = false;
+	bool moveRightBox = false;
 	bool moveLeft = false;
+	bool moveLeftBox = false;
 	bool moveUp = false;
+	bool moveUpBox = false;
 	bool moveDown = false;
+	bool moveDownBox = false;
+
+	int lastBoxCollected = 0;
 
 	namespace Gameplay_Section
 	{
@@ -44,9 +56,9 @@ namespace Juego
 			}
 			if (currentLevel == 0)
 			{
-				player.position = { (float)screenWidth / 12, (float)screenHeight / 2 };
-				playerfront.position = { (float)screenWidth / 12, (float)screenHeight / 2 };
-				playerhitbox.position = { (float)screenWidth / 12 - playerhitbox.size.x / 2, (float)screenHeight / 2 - playerhitbox.size.y / 2 };
+				player.position = { (float)screenWidth / 6, (float)screenHeight / 2 };
+				playerfront.position = { (float)screenWidth / 6, (float)screenHeight / 2 };
+				playerhitbox.position = { (float)screenWidth / 6 - playerhitbox.size.x / 2, (float)screenHeight / 2 - playerhitbox.size.y / 2 };
 			}
 			else if(currentLevel == 1) player.position = { (float)screenWidth / 10, obBackground.pos.y + obBackground.size.y - player.size.y};
 			else if(currentLevel == 2) player.position = { (float)screenWidth / 10, obBackground.pos.y + player.size.y };
@@ -63,49 +75,52 @@ namespace Juego
 			playerfront.rotation = 0;
 			playerfront.textureTint = SKYBLUE;
 		}
-		
-		void playerGravityExec()
-		{
-		}
 
 		void playerInput()
 		{
-			if (IsKeyPressed(playerKeys[GRAVITY]))
+			if (IsKeyDown(playerKeys[REVERSE]))
 			{
-					
-			}
+				if (player.rotation == 90)
+				{
+					playerAccelerationLeft = playerAccelerationLeft + 0.25f;
 
-			if (IsKeyDown(playerKeys[UP]))
-			{
-				//player.size = { 50, 100 };
-				player.rotation = 0;
+					if (playerAccelerationRight <= 0) playerAccelerationRight = 0;
+					else playerAccelerationRight = playerAccelerationRight - 0.25f;
 
+					if (playerAccelerationUp <= 0) playerAccelerationUp = 0;
+					else playerAccelerationUp = playerAccelerationUp - 0.35f;
+					if (playerAccelerationDown <= 0) playerAccelerationDown = 0;
+					else playerAccelerationDown = playerAccelerationDown - 0.35f;
+				}
 
-				/*playerhitbox.position.y -= player.defaultSpeed * GetFrameTime();*/
+				if (player.rotation == 270)
+				{
+					playerAccelerationRight = playerAccelerationRight + 0.25f;
+
+					if (playerAccelerationLeft <= 0) playerAccelerationLeft = 0;
+					else playerAccelerationLeft = playerAccelerationLeft - 0.25f;
+
+					if (playerAccelerationUp <= 0) playerAccelerationUp = 0;
+					else playerAccelerationUp = playerAccelerationUp - 0.35f;
+					if (playerAccelerationDown <= 0) playerAccelerationDown = 0;
+					else playerAccelerationDown = playerAccelerationDown - 0.35f;
+				}
+
+				if (player.rotation == 180)
+				{
 					playerAccelerationUp = playerAccelerationUp + 0.25f;
 
 					if (playerAccelerationDown <= 0) playerAccelerationDown = 0;
 					else playerAccelerationDown = playerAccelerationDown - 0.25f;
-					
+
 					if (playerAccelerationLeft <= 0) playerAccelerationLeft = 0;
 					else playerAccelerationLeft = playerAccelerationLeft - 0.35f;
 					if (playerAccelerationRight <= 0) playerAccelerationRight = 0;
 					else playerAccelerationRight = playerAccelerationRight - 0.35f;
-					
-					//
-					
-					//playerhitbox.position.y = player.position.y - collisionFix;
-					//player.position.y = playerhitbox.position.y;
-					//playerfront.position.y = player.position.y;
-					
-			}
-			else if (IsKeyDown(playerKeys[DOWN]))
-			{
-				//player.size = { 50, 100 };
-				player.rotation = 180;
+				}
 
-				/*playerhitbox.position.y += player.defaultSpeed * GetFrameTime();*/
-
+				if (player.rotation == 0)
+				{
 					playerAccelerationDown = playerAccelerationDown + 0.25f;
 
 					if (playerAccelerationUp <= 0) playerAccelerationUp = 0;
@@ -115,29 +130,42 @@ namespace Juego
 					else playerAccelerationLeft = playerAccelerationLeft - 0.35f;
 					if (playerAccelerationRight <= 0) playerAccelerationRight = 0;
 					else playerAccelerationRight = playerAccelerationRight - 0.35f;
-				
+				}
+			}
+			else if (IsKeyDown(playerKeys[UP]))
+			{
+					player.rotation = 0;
+					playerAccelerationUp = playerAccelerationUp + 0.25f;
 
-				//player.position.y += player.defaultSpeed * GetFrameTime();
-				//playerfront.position.y = player.position.y;
-				//playerhitbox.position.y += player.defaultSpeed * GetFrameTime();
-				//playerfront.position.x = player.position.x;
+					if (playerAccelerationDown <= 0) playerAccelerationDown = 0;
+					else playerAccelerationDown = playerAccelerationDown - 0.25f;
+					
+					if (playerAccelerationLeft <= 0) playerAccelerationLeft = 0;
+					else playerAccelerationLeft = playerAccelerationLeft - 0.35f;
+					if (playerAccelerationRight <= 0) playerAccelerationRight = 0;
+					else playerAccelerationRight = playerAccelerationRight - 0.35f;					
+			}
+			else if (IsKeyDown(playerKeys[DOWN]))
+			{
+					player.rotation = 180;
+					playerAccelerationDown = playerAccelerationDown + 0.25f;
+
+					if (playerAccelerationUp <= 0) playerAccelerationUp = 0;
+					else playerAccelerationUp = playerAccelerationUp - 0.25f;
+
+					if (playerAccelerationLeft <= 0) playerAccelerationLeft = 0;
+					else playerAccelerationLeft = playerAccelerationLeft - 0.35f;
+					if (playerAccelerationRight <= 0) playerAccelerationRight = 0;
+					else playerAccelerationRight = playerAccelerationRight - 0.35f;
 			}
 			else if (IsKeyDown(playerKeys[RIGHT]))
 			{
-				//player.size = { 100, 50 };
-
 				player.rotation = 90;
-
-				//
-				//playerfront.position.x = player.position.x;
-				
-
 				playerAccelerationRight = playerAccelerationRight + 0.25f;
 
 				if (playerAccelerationLeft <= 0) playerAccelerationLeft = 0;
 				else playerAccelerationLeft = playerAccelerationLeft - 0.25f;
 				
-
 				if (playerAccelerationUp <= 0) playerAccelerationUp = 0;
 				else playerAccelerationUp = playerAccelerationUp - 0.35f;
 				if (playerAccelerationDown <= 0) playerAccelerationDown = 0;
@@ -145,13 +173,7 @@ namespace Juego
 			}
 			else if (IsKeyDown(playerKeys[LEFT]))
 			{
-				//player.size = { 100, 50 };
 				player.rotation = 270;
-
-				//player.position.x -= player.defaultSpeed * GetFrameTime();
-				//playerfront.position.x = player.position.x;
-				
-
 				playerAccelerationLeft = playerAccelerationLeft + 0.25f;
 
 				if (playerAccelerationRight <= 0) playerAccelerationRight = 0;
@@ -179,58 +201,184 @@ namespace Juego
 			}
 		}
 
-		//void playerCollisions(int obstacle)
-		//{
-		//	player.textureTint = PURPLE;
+		void checkImpulseBox()
+		{
+			for (int i = maxGarbageBoxes; i >= 0; i--)
+			{
+				if (garbageBox[i].alreadyOnPlayer && garbageBox[i].isOnPlayer)
+				{
+					if (player.rotation == 180 && moveUp)
+					{
+						garbageBox[i].moveUp = true;
+						garbageBox[i].isOnPlayer = false;
+						garbageBox[i].alreadyOnPlayer = false;
+						garbageBox[i].AccelerationUp = playerAccelerationDown * 2.0f;
+						i = -1;
+					}
 
-		//	if (player.position.x <= obstacles[obstacle].pos.x + obstacles[obstacle].size.x && player.position.x > obstacles[obstacle].pos.x + obstacles[obstacle].size.x - 10)
-		//	{
-		//		player.isInvertedGravityX = true;
-		//		player.textureTint = BLUE;
-		//	}
-		//	else if (player.position.x + player.size.x >= obstacles[obstacle].pos.x && player.position.x + player.size.x <= obstacles[obstacle].pos.x + 10)
-		//	{
-		//		player.isInvertedGravityX = false;
-		//		player.textureTint = YELLOW;
-		//	}
+					if (player.rotation == 0 && moveDown)
+					{
+						garbageBox[i].moveDown = true;
+						garbageBox[i].isOnPlayer = false;
+						garbageBox[i].alreadyOnPlayer = false;
+						garbageBox[i].AccelerationDown = playerAccelerationUp * 2.0f;
+						i = -1;
+					}
 
-		//	if (player.position.y + player.size.y >= obstacles[obstacle].pos.y && player.position.y + player.size.y <= obstacles[obstacle].pos.y + 10)
-		//	{
-		//		player.isPlayerStickedOnWall = false;
-		//		player.isPlayerStickedOnWall2 = true;
-		//		player.activatedGravity = false;
-		//		player.position.y = obstacles[obstacle].pos.y - player.size.y;
-		//		//playerAccelerationUp = 0;
-		//	}
-		//	else if (player.position.y <= obstacles[obstacle].pos.y + obstacles[obstacle].size.y && player.position.y >= obstacles[obstacle].pos.y + obstacles[obstacle].size.y - 10)
-		//	{
-		//		player.isPlayerStickedOnWall = false;
-		//		player.isPlayerStickedOnWall2 = true;
-		//		player.activatedGravity = false;
-		//		player.position.y = obstacles[obstacle].pos.y + obstacles[obstacle].size.y;
-		//		
-		//		//playerAccelerationDown = 0;
-		//	}
-		//	else if (player.position.x + player.size.x >= obstacles[obstacle].pos.x && player.position.x + player.size.x <= obstacles[obstacle].pos.x + 10 && player.position.y + player.size.y >= obstacles[obstacle].pos.y && player.position.y <= obstacles[obstacle].pos.y + obstacles[obstacle].size.y)
-		//	{
-		//		player.isPlayerStickedOnWall = false;
-		//		player.isPlayerStickedOnWall2 = true;
-		//		player.activatedGravity = false;
-		//		player.position.x = obstacles[obstacle].pos.x - player.size.x;
-		//		//playerAccelerationRight = 0;
-		//	}
-		//	else if (player.position.x <= obstacles[obstacle].pos.x + obstacles[obstacle].size.x && player.position.x > obstacles[obstacle].pos.x + obstacles[obstacle].size.x - 10 && player.position.y + player.size.y >= obstacles[obstacle].pos.y && player.position.y <= obstacles[obstacle].pos.y + obstacles[obstacle].size.y)
-		//	{
-		//		player.isPlayerStickedOnWall = false;
-		//		player.isPlayerStickedOnWall2 = true;
-		//		player.activatedGravity = false;
-		//		player.position.x = obstacles[obstacle].pos.x + obstacles[obstacle].size.x - 0.1f;
-		//		//playerAccelerationLeft = 0;
-		//	}
-		//}
+					if (player.rotation == 270 && moveRight)
+					{
+						garbageBox[i].moveRight = true;
+						garbageBox[i].isOnPlayer = false;
+						garbageBox[i].alreadyOnPlayer = false;
+						garbageBox[i].AccelerationRight = playerAccelerationLeft * 2.0f;
+						i = -1;
+					}
+
+					if (player.rotation == 90 && moveLeft)
+					{
+						garbageBox[i].moveLeft = true;
+						garbageBox[i].isOnPlayer = false;
+						garbageBox[i].alreadyOnPlayer = false;
+						garbageBox[i].AccelerationLeft = playerAccelerationRight * 2.0f;
+						i = -1;
+					}
+
+					if (player.rotation == 180 && moveDown)
+					{
+						garbageBox[i].moveUp = true;
+						garbageBox[i].isOnPlayer = false;
+						garbageBox[i].alreadyOnPlayer = false;
+						garbageBox[i].AccelerationUp = playerAccelerationUp * 2.0f;
+						i = -1;
+					}
+
+					if (player.rotation == 0 && moveUp)
+					{
+						garbageBox[i].moveDown = true;
+						garbageBox[i].isOnPlayer = false;
+						garbageBox[i].alreadyOnPlayer = false;
+						garbageBox[i].AccelerationDown = playerAccelerationDown * 2.0f;
+						i = -1;
+					}
+
+					if (player.rotation == 90 && moveRight)
+					{
+						garbageBox[i].moveLeft = true;
+						garbageBox[i].isOnPlayer = false;
+						garbageBox[i].alreadyOnPlayer = false;
+						garbageBox[i].AccelerationLeft = playerAccelerationLeft * 2.0f;
+						i = -1;
+					}
+
+					if (player.rotation == 270 && moveLeft)
+					{
+						garbageBox[i].moveRight = true;
+						garbageBox[i].isOnPlayer = false;
+						garbageBox[i].alreadyOnPlayer = false;
+						garbageBox[i].AccelerationRight = playerAccelerationRight * 2.0f;
+						i = -1;
+					}
+				}
+			}
+		}
+
+		/*void checkImpulseBoxUp()
+		{
+			for (int i = maxGarbageBoxes; i >= 0; i--)
+			{
+				if (garbageBox[i].alreadyOnPlayer && garbageBox[i].isOnPlayer)
+				{
+					if (player.rotation == 180 && moveUp)
+					{
+						garbageBox[i].moveUp = true;
+						garbageBox[i].isOnPlayer = false;
+						garbageBox[i].alreadyOnPlayer = false;
+						garbageBox[i].AccelerationUp = playerAccelerationDown * 2.0f;
+						i = -1;
+					}
+				}
+			}	
+		}
+
+		void checkImpulseBoxDown()
+		{
+			for (int i = maxGarbageBoxes; i >= 0; i--)
+			{
+				if (garbageBox[i].alreadyOnPlayer && garbageBox[i].isOnPlayer)
+				{
+					if (player.rotation == 0 && moveDown)
+					{
+						garbageBox[i].moveDown = true;
+						garbageBox[i].isOnPlayer = false;
+						garbageBox[i].alreadyOnPlayer = false;
+						garbageBox[i].AccelerationDown = playerAccelerationUp * 2.0f;
+						i = -1;
+					}
+				}
+			}
+		}
+
+		void checkImpulseBoxLeft()
+		{
+			for (int i = maxGarbageBoxes; i >= 0; i--)
+			{
+				if (garbageBox[i].alreadyOnPlayer && garbageBox[i].isOnPlayer)
+				{
+					if (player.rotation == 270 && moveLeft)
+					{
+						garbageBox[i].moveLeft = true;
+						garbageBox[i].isOnPlayer = false;
+						garbageBox[i].alreadyOnPlayer = false;
+						garbageBox[i].AccelerationLeft = playerAccelerationRight * 2.0f;
+						i = -1;
+					}
+				}
+			}			
+		}
+
+		void checkImpulseBoxRight()
+		{
+			for (int i = maxGarbageBoxes; i >= 0; i--)
+			{
+				if (garbageBox[i].alreadyOnPlayer && garbageBox[i].isOnPlayer)
+				{
+					if (player.rotation == 90 && moveRight)
+					{
+						garbageBox[i].moveRight = true;
+						garbageBox[i].isOnPlayer = false;
+						garbageBox[i].alreadyOnPlayer = false;
+						garbageBox[i].AccelerationRight = playerAccelerationLeft * 2.0f;
+						i = -1;
+					}
+				}
+			}		
+		}*/
 
 		void playerUpdate()
 		{
+			
+			
+			for (int i = 0; i < maxGarbageBoxes; i++)
+			{
+
+				if (CheckCollisionRecs({ playerhitbox.position.x,playerhitbox.position.y,playerhitbox.size.x,playerhitbox.size.y }, { garbageBox[i].pos.x ,garbageBox[i].pos.y,garbageBox[i].size.x,garbageBox[i].size.y }) && (garbageBox[i].AccelerationUp <= 0 && garbageBox[i].AccelerationDown <= 0 && garbageBox[i].AccelerationLeft <= 0 && garbageBox[i].AccelerationRight <= 0))
+				{
+					if (!garbageBox[i].alreadyOnPlayer)
+					{
+						garbageBoxesCollected++;
+						garbageBox[i].isOnPlayer = true;
+						garbageBox[i].alreadyOnPlayer = true;
+					}
+				}
+				else
+				{
+					garbageBox[i].isOnPlayer = false;
+					garbageBox[i].alreadyOnPlayer = false;
+				}
+
+				//if (garbageBox[i].alreadyOnPlayer && (moveUp || moveDown || moveLeft || moveRight)) lastBoxCollected = i;
+			}
+
 			playerhitbox.position.x += playerAccelerationRight * GetFrameTime();
 			playerhitbox.position.x -= playerAccelerationLeft * GetFrameTime();
 			playerhitbox.position.y += playerAccelerationDown * GetFrameTime();
@@ -247,7 +395,115 @@ namespace Juego
 			if (playerAccelerationUp >= player.defaultSpeed) playerAccelerationUp = player.defaultSpeed;
 
 			//////////////////////////////////--------------------------
-			
+
+			for (int i = 0; i < maxObstacles; i++)
+			{
+				if (CheckCollisionRecs({ playerhitbox.position.x,playerhitbox.position.y,playerhitbox.size.x,playerhitbox.size.y }, { obstacles[i].pos.x ,obstacles[i].pos.y,obstacles[i].size.x,obstacles[i].size.y }))
+				{
+					if (playerhitbox.position.x + playerhitbox.size.x > obstacles[i].pos.x && playerhitbox.position.x + playerhitbox.size.x < obstacles[i].pos.x + (obstacles[i].size.x / 2) && playerhitbox.position.y + playerhitbox.size.y > obstacles[i].pos.y + 0.5f && playerhitbox.position.y < obstacles[i].pos.y + obstacles[i].size.y - 0.5f)
+					{
+						moveLeft = true;
+						checkImpulseBox();
+						if (!(currentlyTouching))
+						{
+							garbageBoxesCollected--;
+							currentlyTouching = true;
+						}
+
+						playerAccelerationLeft = playerAccelerationRight;
+
+						playerAccelerationRight = 0;
+						player.position.x = obstacles[i].pos.x - player.size.x + collisionFix2;
+						playerhitbox.position.x = obstacles[i].pos.x - playerhitbox.size.x;
+					}
+
+					if (playerhitbox.position.x < obstacles[i].pos.x + obstacles[i].size.x && playerhitbox.position.x > obstacles[i].pos.x + (obstacles[i].size.x / 2) && playerhitbox.position.y + playerhitbox.size.y > obstacles[i].pos.y + 0.5f && playerhitbox.position.y < obstacles[i].pos.y + obstacles[i].size.y - 0.5f)
+					{
+						moveRight = true;
+						checkImpulseBox();
+						if (!(currentlyTouching))
+						{
+							garbageBoxesCollected--;
+							currentlyTouching = true;
+						}
+
+						playerAccelerationRight = playerAccelerationLeft;
+
+						playerAccelerationLeft = 0;
+
+						player.position.x = obstacles[i].pos.x + obstacles[i].size.x + collisionFix;
+						playerhitbox.position.x = obstacles[i].pos.x + obstacles[i].size.x;
+					}
+
+					if (playerhitbox.position.y + playerhitbox.size.y > obstacles[i].pos.y && playerhitbox.position.y + playerhitbox.size.y < obstacles[i].pos.y + (obstacles[i].size.y / 2) && playerhitbox.position.x + playerhitbox.size.x > obstacles[i].pos.x + 0.1f && playerhitbox.position.x < obstacles[i].pos.x + obstacles[i].size.x - 0.1f)
+					{
+						moveUp = true;
+						checkImpulseBox();
+						if (!(currentlyTouching))
+						{
+							garbageBoxesCollected--;
+							currentlyTouching = true;
+						}
+						playerAccelerationUp = playerAccelerationDown;
+
+						playerAccelerationDown = 0;
+						player.position.y = obstacles[i].pos.y - player.size.y + collisionFix;
+						playerhitbox.position.y = obstacles[i].pos.y - playerhitbox.size.y;
+					}
+
+					if (playerhitbox.position.y <= obstacles[i].pos.y + obstacles[i].size.y && playerhitbox.position.y > obstacles[i].pos.y + (obstacles[i].size.y / 2) && playerhitbox.position.x + playerhitbox.size.x > obstacles[i].pos.x + 0.1f && playerhitbox.position.x < obstacles[i].pos.x + obstacles[i].size.x - 0.1f)
+					{
+						moveDown = true;
+						checkImpulseBox();
+						if (!(currentlyTouching))
+						{
+							garbageBoxesCollected--;
+							currentlyTouching = true;
+						}
+						playerAccelerationDown = playerAccelerationUp;
+
+						playerAccelerationUp = 0;
+						player.position.y = obstacles[i].pos.y + obstacles[i].size.y + collisionFix;
+						playerhitbox.position.y = obstacles[i].pos.y + obstacles[i].size.y;
+					}
+
+					player.textureTint = YELLOW;
+				}
+				else
+				{
+					player.textureTint = GRAY;
+					currentlyTouching = false;
+				}
+
+				for (int j = 0; j < maxGarbageBoxes; j++)
+				{
+					if (CheckCollisionRecs({ garbageBox[j].pos.x,garbageBox[j].pos.y,garbageBox[j].size.x,garbageBox[j].size.y }, { obstacles[i].pos.x ,obstacles[i].pos.y,obstacles[i].size.x,obstacles[i].size.y }))
+					{
+						if (garbageBox[j].pos.x + garbageBox[j].size.x > obstacles[j].pos.x && garbageBox[j].pos.x + playerhitbox.size.x < obstacles[i].pos.x + (obstacles[i].size.x / 2) && garbageBox[j].pos.y + garbageBox[j].size.y > obstacles[i].pos.y + 0.5f && garbageBox[j].pos.y < obstacles[i].pos.y + obstacles[i].size.y - 0.5f)
+						{
+							garbageBox[j].pos.x = obstacles[i].pos.x - garbageBox[j].size.x;
+						}
+
+						if (garbageBox[j].pos.x < obstacles[i].pos.x + obstacles[i].size.x && garbageBox[j].pos.x > obstacles[i].pos.x + (obstacles[i].size.x / 2) && garbageBox[j].pos.y + garbageBox[j].size.y > obstacles[i].pos.y + 0.5f && garbageBox[j].pos.y < obstacles[i].pos.y + obstacles[i].size.y - 0.5f)
+						{
+							garbageBox[j].pos.x = obstacles[i].pos.x + obstacles[i].size.x;
+						}
+
+						if (garbageBox[j].pos.y + garbageBox[j].size.y > obstacles[i].pos.y && garbageBox[j].pos.y + garbageBox[j].size.y < obstacles[i].pos.y + (obstacles[i].size.y / 2) && garbageBox[j].pos.x + garbageBox[j].size.x > obstacles[i].pos.x + 0.1f && garbageBox[j].pos.x < obstacles[i].pos.x + obstacles[i].size.x - 0.1f)
+						{
+							garbageBox[j].pos.y = obstacles[i].pos.y - garbageBox[j].size.y;
+						}
+
+						if (garbageBox[j].pos.y <= obstacles[i].pos.y + obstacles[i].size.y && garbageBox[j].pos.y > obstacles[i].pos.y + (obstacles[i].size.y / 2) && garbageBox[j].pos.x + garbageBox[j].size.x > obstacles[i].pos.x + 0.1f && garbageBox[j].pos.x < obstacles[i].pos.x + obstacles[i].size.x - 0.1f)
+						{
+							garbageBox[j].pos.y = obstacles[i].pos.y + obstacles[i].size.y;
+						}
+					}
+				}
+
+				
+			}
+
 			if (moveRight)
 			{
 				if (playerAccelerationRight <= 0)
@@ -288,170 +544,133 @@ namespace Juego
 				else playerAccelerationDown = playerAccelerationDown - 0.25f;
 			}
 
-			for (int i = 0; i < maxObstacles; i++)
+			for (int i = 0; i < maxGarbageBoxes; i++)
 			{
-				if (CheckCollisionRecs({ playerhitbox.position.x,playerhitbox.position.y,playerhitbox.size.x,playerhitbox.size.y }, { obstacles[i].pos.x ,obstacles[i].pos.y,obstacles[i].size.x,obstacles[i].size.y }))
+				if (garbageBox[i].moveRight)
 				{
-
-					if (playerhitbox.position.x + playerhitbox.size.x > obstacles[i].pos.x && playerhitbox.position.x + playerhitbox.size.x < obstacles[i].pos.x + (obstacles[i].size.x / 2) && playerhitbox.position.y + playerhitbox.size.y > obstacles[i].pos.y + 0.5f && playerhitbox.position.y < obstacles[i].pos.y + obstacles[i].size.y - 0.5f)
+					if (garbageBox[i].AccelerationRight <= 0)
 					{
-						moveLeft = true;
-
-						playerAccelerationLeft = playerAccelerationRight;
-
-						playerAccelerationRight = 0;
-						player.position.x = obstacles[i].pos.x - player.size.x + collisionFix2;
-						playerhitbox.position.x = obstacles[i].pos.x - playerhitbox.size.x;
+						garbageBox[i].moveRight = false;
+						garbageBox[i].AccelerationRight = 0;
 					}
-
-					if (playerhitbox.position.x < obstacles[i].pos.x + obstacles[i].size.x && playerhitbox.position.x > obstacles[i].pos.x + (obstacles[i].size.x / 2) && playerhitbox.position.y + playerhitbox.size.y > obstacles[i].pos.y + 0.5f && playerhitbox.position.y < obstacles[i].pos.y + obstacles[i].size.y - 0.5f)
-					{
-						moveRight = true;
-
-						playerAccelerationRight = playerAccelerationLeft;
-
-						playerAccelerationLeft = 0;
-
-						player.position.x = obstacles[i].pos.x + obstacles[i].size.x + collisionFix;
-						playerhitbox.position.x = obstacles[i].pos.x + obstacles[i].size.x;
-					}
-
-					if (playerhitbox.position.y + playerhitbox.size.y > obstacles[i].pos.y && playerhitbox.position.y + playerhitbox.size.y < obstacles[i].pos.y + (obstacles[i].size.y / 2) && playerhitbox.position.x + playerhitbox.size.x > obstacles[i].pos.x + 0.1f && playerhitbox.position.x < obstacles[i].pos.x + obstacles[i].size.x - 0.1f)
-					{
-						moveUp = true;
-
-						playerAccelerationUp = playerAccelerationDown;
-
-						playerAccelerationDown = 0;
-						player.position.y = obstacles[i].pos.y - player.size.y + collisionFix;
-						playerhitbox.position.y = obstacles[i].pos.y - playerhitbox.size.y;
-					}
-
-					if (playerhitbox.position.y <= obstacles[i].pos.y + obstacles[i].size.y && playerhitbox.position.y > obstacles[i].pos.y + (obstacles[i].size.y / 2) && playerhitbox.position.x + playerhitbox.size.x > obstacles[i].pos.x + 0.1f && playerhitbox.position.x < obstacles[i].pos.x + obstacles[i].size.x - 0.1f)
-					{
-						moveDown = true;
-
-						playerAccelerationDown = playerAccelerationUp;
-
-						playerAccelerationUp = 0;
-						player.position.y = obstacles[i].pos.y + obstacles[i].size.y + collisionFix;
-						playerhitbox.position.y = obstacles[i].pos.y + obstacles[i].size.y;
-					}
-
-					player.textureTint = YELLOW;
+					else garbageBox[i].AccelerationRight = garbageBox[i].AccelerationRight - 0.35f;
 				}
-				else
+
+				if (garbageBox[i].moveLeft)
 				{
-					player.textureTint = GRAY;
+
+					if (garbageBox[i].AccelerationLeft <= 0)
+					{
+						garbageBox[i].moveLeft = false;
+						garbageBox[i].AccelerationLeft = 0;
+					}
+					else garbageBox[i].AccelerationLeft = garbageBox[i].AccelerationLeft - 0.35f;
+				}
+
+				if (garbageBox[i].moveUp)
+				{
+					if (garbageBox[i].AccelerationUp <= 0)
+					{
+						garbageBox[i].moveUp = false;
+						garbageBox[i].AccelerationUp = 0;
+					}
+					else garbageBox[i].AccelerationUp = garbageBox[i].AccelerationUp - 0.35f;
+				}
+
+				if (garbageBox[i].moveDown)
+				{
+					if (garbageBox[i].AccelerationDown <= 0)
+					{
+						garbageBox[i].moveDown = false;
+						garbageBox[i].AccelerationDown = 0;
+					}
+					else garbageBox[i].AccelerationDown = garbageBox[i].AccelerationDown - 0.35f;
 				}
 			}
-				
-			/*if (CheckCollisionRecs({playerhitbox.position.x,playerhitbox.position.y,playerhitbox.size.x,playerhitbox.size.y}, { obstacles[obMiddleSquare].pos.x ,obstacles[obMiddleSquare].pos.y,obstacles[obMiddleSquare].size.x,obstacles[obMiddleSquare].size.y }))
-			{
-
-				if (playerhitbox.position.x + playerhitbox.size.x > obstacles[obMiddleSquare].pos.x && playerhitbox.position.x + playerhitbox.size.x < obstacles[obMiddleSquare].pos.x + (obstacles[obMiddleSquare].size.x / 2) && playerhitbox.position.y + playerhitbox.size.y > obstacles[obMiddleSquare].pos.y + 0.5f && playerhitbox.position.y < obstacles[obMiddleSquare].pos.y + obstacles[obMiddleSquare].size.y - 0.5f)
-				{
-					moveLeft = true;
-
-					playerAccelerationLeft = playerAccelerationRight;
-
-					playerAccelerationRight = 0;
-					player.position.x = obstacles[obMiddleSquare].pos.x - player.size.x + collisionFix2;
-					playerhitbox.position.x = obstacles[obMiddleSquare].pos.x - playerhitbox.size.x;
-				}
-
-				if (playerhitbox.position.x < obstacles[obMiddleSquare].pos.x + obstacles[obMiddleSquare].size.x && playerhitbox.position.x > obstacles[obMiddleSquare].pos.x + (obstacles[obMiddleSquare].size.x / 2) && playerhitbox.position.y + playerhitbox.size.y > obstacles[obMiddleSquare].pos.y + 0.5f && playerhitbox.position.y < obstacles[obMiddleSquare].pos.y + obstacles[obMiddleSquare].size.y - 0.5f)
-				{
-					moveRight = true;
-
-					playerAccelerationRight = playerAccelerationLeft;
-
-					playerAccelerationLeft = 0;
-
-					player.position.x = obstacles[obMiddleSquare].pos.x + obstacles[obMiddleSquare].size.x + collisionFix;
-					playerhitbox.position.x = obstacles[obMiddleSquare].pos.x + obstacles[obMiddleSquare].size.x;
-				}
-
-				if (playerhitbox.position.y + playerhitbox.size.y > obstacles[obMiddleSquare].pos.y && playerhitbox.position.y + playerhitbox.size.y < obstacles[obMiddleSquare].pos.y + (obstacles[obMiddleSquare].pos.y/2) && playerhitbox.position.x + playerhitbox.size.x > obstacles[obMiddleSquare].pos.x + 0.1f && playerhitbox.position.x < obstacles[obMiddleSquare].pos.x + obstacles[obMiddleSquare].size.x - 0.1f)
-				{
-					moveUp = true;
-
-					playerAccelerationUp = playerAccelerationDown;
-
-					playerAccelerationDown = 0;
-					player.position.y = obstacles[obMiddleSquare].pos.y - player.size.y + collisionFix;
-					playerhitbox.position.y = obstacles[obMiddleSquare].pos.y - playerhitbox.size.y;
-				}
-
-				if (playerhitbox.position.y <= obstacles[obMiddleSquare].pos.y + obstacles[obMiddleSquare].size.y && playerhitbox.position.y > obstacles[obMiddleSquare].pos.y + (obstacles[obMiddleSquare].pos.y / 2) && playerhitbox.position.x + playerhitbox.size.x > obstacles[obMiddleSquare].pos.x + 0.1f && playerhitbox.position.x < obstacles[obMiddleSquare].pos.x + obstacles[obMiddleSquare].size.x - 0.1f)
-				{
-					moveDown = true;
-
-					playerAccelerationDown = playerAccelerationUp;
-
-					playerAccelerationUp = 0;
-					player.position.y = obstacles[obMiddleSquare].pos.y + obstacles[obMiddleSquare].size.y + collisionFix;
-					playerhitbox.position.y = obstacles[obMiddleSquare].pos.y + obstacles[obMiddleSquare].size.y;
-				}
-
-				player.textureTint = YELLOW;
-			}
-			else
-			{
-				player.textureTint = WHITE;
-			}*/
 
 			//////////////////////////////////--------------------------
+
+			for (int j = 0; j < maxGarbageBoxes; j++)
+			{
+				if (garbageBox[j].pos.y + garbageBox[j].size.y > obBackground.pos.y + obBackground.size.y)
+				{
+					garbageBox[j].pos.y = obBackground.pos.y + obBackground.size.y - garbageBox[j].size.y;
+				}
+
+				if (garbageBox[j].pos.y < obBackground.pos.y)
+				{
+					garbageBox[j].pos.y = obBackground.pos.y;
+				}
+
+				if (garbageBox[j].pos.x + garbageBox[j].size.x > obBackground.pos.x + obBackground.size.x)
+				{
+					garbageBox[j].pos.x = obBackground.pos.x + obBackground.size.x - garbageBox[j].size.x;
+				}
+
+				if (garbageBox[j].pos.x <= obBackground.pos.x)
+				{
+					garbageBox[j].pos.x = obBackground.pos.x;
+				}
+			}
 
 			if (playerhitbox.position.y + playerhitbox.size.y > obBackground.pos.y + obBackground.size.y)
 			{
 				moveUp = true;
-
+				//checkImpulseBoxUp();
+				checkImpulseBox();
+				if (!(currentlyTouching))
+				{
+					garbageBoxesCollected--;
+					currentlyTouching = true;
+				}
 				playerAccelerationUp = playerAccelerationDown;
 
 				playerAccelerationDown = 0;
 				player.position.y = obBackground.pos.y + obBackground.size.y - player.size.y + collisionFix;
 				playerhitbox.position.y = obBackground.pos.y + obBackground.size.y - playerhitbox.size.y;
 			}
-			else
-			{
-				player.position.y += playerAccelerationDown * GetFrameTime();
-			}
-			//asd
+
 			if (playerhitbox.position.y < obBackground.pos.y)
 			{
 				moveDown = true;
-
+				checkImpulseBox();
+				if (!(currentlyTouching))
+				{
+					garbageBoxesCollected--;
+					currentlyTouching = true;
+				}
 				playerAccelerationDown = playerAccelerationUp;
 
 				playerAccelerationUp = 0;
 				player.position.y = obBackground.pos.y + collisionFix;
 				playerhitbox.position.y = obBackground.pos.y;
 			}
-			else
-			{
-				player.position.y -= playerAccelerationUp * GetFrameTime();
-			}
 
 			if (playerhitbox.position.x + playerhitbox.size.x > obBackground.pos.x + obBackground.size.x)
 			{
 				moveLeft = true;
-
+				checkImpulseBox();
+				if (!(currentlyTouching))
+				{
+					garbageBoxesCollected--;
+					currentlyTouching = true;
+				}
 				playerAccelerationLeft = playerAccelerationRight;
 
 				playerAccelerationRight = 0;
 				player.position.x = obBackground.pos.x + obBackground.size.x - player.size.x + collisionFix2;
 				playerhitbox.position.x = obBackground.pos.x + obBackground.size.x - playerhitbox.size.x;
 			}
-			else
-			{
-				
-			}
 
 			if (playerhitbox.position.x <= obBackground.pos.x)
 			{
 				moveRight = true;
-
+				checkImpulseBox();
+				if (!(currentlyTouching))
+				{
+					garbageBoxesCollected--;
+					currentlyTouching = true;
+				}
 				playerAccelerationRight = playerAccelerationLeft;
 
 				playerAccelerationLeft = 0;
@@ -459,10 +678,8 @@ namespace Juego
 				player.position.x = obBackground.pos.x + collisionFix;
 				playerhitbox.position.x = obBackground.pos.x;		
 			}
-			else
-			{
-				
-			}
+
+			currentlyTouching = false;
 			
 		}
 
