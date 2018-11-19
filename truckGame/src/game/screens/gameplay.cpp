@@ -20,15 +20,22 @@ namespace Juego
 	static Color optionColor = RED;
 
 	static bool gamePaused = false;
-	
+
 	static bool timerON = true;
+	float matchtimer = 60;
 
 	static Rectangle pauseBoxRec;
+
+	Music engineMax;
+	Music engineRun;
+	Music engineRunOff;
+	Music engineReverse;
+	Sound crash;
 
 	static bool isButtonSoundPlaying = false;
 	static int buttonSelectSaveNumber = 0;
 
-	static int garbagePoints = 0;
+	int garbagePoints = 0;
 
 	namespace Gameplay_Section
 	{
@@ -84,43 +91,17 @@ namespace Juego
 		{
 			currentLevel = 0;
 
-			if (resolutionNormal)
-			{
-				//shipImage = LoadImage("res/assets/textures/player_ship01v2.png");
-				//ImageResize(&shipImage, 300, 70);// 150 70
-				//ship = LoadTextureFromImage(shipImage);
+			engineMax = LoadMusicStream("res/assets/sounds/engine1.ogg");
+			engineRun = LoadMusicStream("res/assets/sounds/enginerun.ogg");
+			engineRunOff = LoadMusicStream("res/assets/sounds/enginereverse.ogg");
+			engineReverse = LoadMusicStream("res/assets/sounds/reversetruck.ogg");
+			crash = LoadSound("res/assets/sounds/crash.wav");
 
-				//enemyShipImage = LoadImage("res/assets/textures/enemy01.png");
-				//ImageResize(&enemyShipImage, 180, 70);
-				//enemyShip = LoadTextureFromImage(enemyShipImage);
-
-				//pauseMenuImage = LoadImage("res/assets/textures/pausemenu.png");
-				//ImageResize(&pauseMenuImage, pauseBoxRec.width, pauseBoxRec.height);
-				//pauseMenu = LoadTextureFromImage(pauseMenuImage);
-
-				//UnloadImage(pauseMenuImage);
-				//UnloadImage(shipImage);
-				//UnloadImage(enemyShipImage);
-
-			}
-			else if (resolutionSmall)
-			{
-				//shipImage = LoadImage("res/assets/textures/player_ship01v2.png");
-				//ImageResize(&shipImage, 300/1.5f, 70/1.5f);// 150 70
-				//ship = LoadTextureFromImage(shipImage);
-
-				//enemyShipImage = LoadImage("res/assets/textures/enemy01.png");
-				//ImageResize(&enemyShipImage, 180 / 1.5f, 70 / 1.5f);
-				//enemyShip = LoadTextureFromImage(enemyShipImage);
-
-				//pauseMenuImage = LoadImage("res/assets/textures/pausemenu.png");
-				//ImageResize(&pauseMenuImage, pauseBoxRec.width, pauseBoxRec.height);
-				//pauseMenu = LoadTextureFromImage(pauseMenuImage);
-
-				//UnloadImage(pauseMenuImage);
-				//UnloadImage(shipImage);
-				//UnloadImage(enemyShipImage);
-			}
+			SetMusicVolume(engineMax, 0.2f);
+			SetMusicVolume(engineRunOff, 0.5f);
+			SetMusicVolume(engineReverse, 0.5f);
+			SetMusicVolume(engineRun, 0.4f);
+			SetSoundVolume(crash, 0.6f);
 
 			#ifdef AUDIO
 			ship_shoot01 = LoadSound("res/assets/sounds/shoot01.wav");
@@ -200,7 +181,13 @@ namespace Juego
 		}
 
 		void UpdateGameplayScreen()
-		{	
+		{
+			if (timerON)
+			{
+				matchtimer -= 1 * GetFrameTime();
+			}
+
+
 			player.inputActive = false;
 
 			mouse.position = { (float)GetMouseX(),(float)GetMouseY() };
@@ -220,6 +207,7 @@ namespace Juego
 			if (gameON)
 			{		
 				playerUpdate();
+				updatePendulum();
 				for (int i = 0; i < maxGarbageBoxes; i++)
 				{
 					if (garbageBox[i].isOnPlayer)
@@ -229,7 +217,6 @@ namespace Juego
 					}
 					else if (!(garbageBox[i].isOnPlayer))
 					{
-						//garbageAccelerationUp = playerAccelerationDown;
 						garbageBox[i].pos.x += garbageBox[i].AccelerationRight * GetFrameTime();
 						garbageBox[i].pos.x -= garbageBox[i].AccelerationLeft * GetFrameTime();
 						garbageBox[i].pos.y += garbageBox[i].AccelerationDown * GetFrameTime();
@@ -238,8 +225,12 @@ namespace Juego
 
 					if (CheckCollisionRecs({ garbageBox[i].pos.x,garbageBox[i].pos.y,garbageBox[i].size.x,garbageBox[i].size.y }, { obstacles[obDumpster].pos.x ,obstacles[obDumpster].pos.y,obstacles[obDumpster].size.x,obstacles[obDumpster].size.y }) && garbageBox[i].isAlive)
 					{
-						garbageBox[i].isAlive = false;
-						garbagePoints++;	
+						if (garbageBox[i].isAlive)
+						{
+							garbageBox[i].isAlive = false;
+							garbageBoxesCollected--;
+							garbagePoints++;
+						}
 					}
 
 					if (!(garbageBox[i].isAlive))
@@ -252,6 +243,25 @@ namespace Juego
 				if (garbageBoxesCollected < 0)
 				{
 					garbageBoxesCollected = 0;
+				}
+
+				if (garbagePoints >= 6)
+				{
+					buttonOption = buttonGameOver;
+					isScreenFinished = true;
+				}
+
+				if (player.lives <= 0)
+				{
+					buttonOption = buttonGameOver;
+					isScreenFinished = true;
+				}
+
+				if (matchtimer <= 0)
+				{
+					player.lives = 0;
+					buttonOption = buttonGameOver;
+					isScreenFinished = true;
 				}
 				
 			}
@@ -290,22 +300,14 @@ namespace Juego
 					}
 				}
 			}
-
-			//---- GAME OVER CONDITION
-
-			/*if (targetsLeft == 0)
-			{
-				gameON = false;
-				timerON = false;
-				buttonOption = buttonGameOver;
-				isScreenFinished = true;
-			}*/
 		}
 
 		void DrawGameplay()
 		{
 			DrawLevel();
 			playerDraw();
+			DrawCircle(demo.pos.x, demo.pos.y, demo.radius, demo.color);
+			DrawArm();
 
 			for (int i = 0; i < maxGarbageBoxes; i++)
 			{
@@ -314,11 +316,12 @@ namespace Juego
 
 			DrawRectangleLines(pauseButton.position.x, pauseButton.position.y, pauseButton.width, pauseButton.height, pauseButton.defaultColor);
 
-			//DrawTextEx(sideFont, FormatText("Targets:%i", targetsLeft), { 20, 20 }, defaultFontSize / 1.5f, 1.0f, GREEN);
-			//garbagePoints
 			DrawTextEx(sideFont, FormatText("Collected:%i", garbageBoxesCollected), { 20, 15 }, defaultFontSize / 1.5f, 1.0f, RED);
 			DrawTextEx(sideFont, FormatText("Points:%i", garbagePoints), {600, 15 }, defaultFontSize / 1.5f, 1.0f, RED);
-			//DrawTextEx(sideFont, FormatText("Rotation:%i", player.rotation), { 20, 20 }, defaultFontSize / 1.5f, 1.0f, RED);
+			DrawTextEx(sideFont, FormatText("Lives:%i", player.lives), { 350, 15 }, defaultFontSize / 1.5f, 1.0f, RED);
+			DrawTextEx(sideFont, FormatText("Time:%f", matchtimer), { 1000, 15 }, defaultFontSize / 1.5f, 1.0f, RED);
+
+
 			DrawTextEx(mainFont,"II", { pauseButton.position.x + 13, pauseButton.position.y + 2 }, defaultFontSize/1.4f, 1.0f, pauseButton.defaultColor);
 			
 
@@ -326,9 +329,6 @@ namespace Juego
 			{
 				if (gamePaused)
 				{
-					//if(resolutionNormal) DrawTexturePro(pauseMenu, { 0, 0, (float)screenWidth / 4.2f, (float)screenHeight / 2.5f }, pauseBoxRec, { 0,0 }, 0, WHITE);
-					//else if(resolutionSmall) DrawTexturePro(pauseMenu, { 0, 0, (float)screenWidth / 4.2f, (float)screenHeight / 2.5f }, pauseBoxRec, { 0,0 }, 0, WHITE);
-					
 					for (int i = 0; i < maxButtons; i++)
 					{
 						DrawRectangleLines(buttons[i].position.x, buttons[i].position.y, buttons[i].width, buttons[i].height, buttons[i].defaultColor);
@@ -350,7 +350,7 @@ namespace Juego
 			timerON = true;
 			garbageBoxesCollected = 0;
 			garbagePoints = 0;
-			//targetsLeft = 50;
+			matchtimer = 60;
 		}
 
 		bool FinishGameplayScreen()
@@ -365,7 +365,10 @@ namespace Juego
 
 		void DeInitGameplayResources()
 		{
-
+			UnloadMusicStream(engineMax);
+			UnloadMusicStream(engineRun);
+			UnloadMusicStream(engineRunOff);
+			UnloadMusicStream(engineReverse);
 			#ifdef AUDIO
 			StopSound(enemy_explode01);
 			StopSound(ship_shoot01);

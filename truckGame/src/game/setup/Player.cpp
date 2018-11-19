@@ -15,11 +15,6 @@ namespace Juego
 	static float playerAccelerationUp = 0;
 	static float playerAccelerationDown = 0;
 
-	//float garbageAccelerationLeft = 0;
-	//float garbageAccelerationRight = 0;
-	//float garbageAccelerationUp = 0;
-	//float garbageAccelerationDown = 0;
-
 	static int collisionFix = 0;
 	static int collisionFix2 = 0;
 	static bool currentlyTouching = false;
@@ -56,9 +51,9 @@ namespace Juego
 			}
 			if (currentLevel == 0)
 			{
-				player.position = { (float)screenWidth / 6, (float)screenHeight / 2 };
-				playerfront.position = { (float)screenWidth / 6, (float)screenHeight / 2 };
-				playerhitbox.position = { (float)screenWidth / 6 - playerhitbox.size.x / 2, (float)screenHeight / 2 - playerhitbox.size.y / 2 };
+				player.position = { (float)screenWidth / 6, (float)screenHeight / 1.9f };
+				playerfront.position = { (float)screenWidth / 6, (float)screenHeight / 1.9f };
+				playerhitbox.position = { (float)screenWidth / 6 - playerhitbox.size.x / 2, (float)screenHeight / 1.9f - playerhitbox.size.y / 2 };
 			}
 			else if(currentLevel == 1) player.position = { (float)screenWidth / 10, obBackground.pos.y + obBackground.size.y - player.size.y};
 			else if(currentLevel == 2) player.position = { (float)screenWidth / 10, obBackground.pos.y + player.size.y };
@@ -66,6 +61,7 @@ namespace Juego
 			player.inputActive = false;
 			player.rotation = 0;
 			player.textureTint = DARKGRAY;
+			player.lives = 10;
 			playerhitbox.isAlive = true;
 			playerhitbox.inputActive = false;
 			playerhitbox.rotation = 0;
@@ -80,6 +76,11 @@ namespace Juego
 		{
 			if (IsKeyDown(playerKeys[REVERSE]))
 			{
+				PlayMusicStream(engineReverse);
+				UpdateMusicStream(engineReverse);
+				StopMusicStream(engineRunOff);
+				StopMusicStream(engineRun);
+
 				if (player.rotation == 90)
 				{
 					playerAccelerationLeft = playerAccelerationLeft + 0.25f;
@@ -134,6 +135,11 @@ namespace Juego
 			}
 			else if (IsKeyDown(playerKeys[UP]))
 			{
+				PlayMusicStream(engineRun);
+				UpdateMusicStream(engineRun);
+				StopMusicStream(engineRunOff);
+				StopMusicStream(engineReverse);
+
 					player.rotation = 0;
 					playerAccelerationUp = playerAccelerationUp + 0.25f;
 
@@ -147,6 +153,11 @@ namespace Juego
 			}
 			else if (IsKeyDown(playerKeys[DOWN]))
 			{
+				PlayMusicStream(engineRun);
+				UpdateMusicStream(engineRun);
+				StopMusicStream(engineRunOff);
+				StopMusicStream(engineReverse);
+
 					player.rotation = 180;
 					playerAccelerationDown = playerAccelerationDown + 0.25f;
 
@@ -160,6 +171,11 @@ namespace Juego
 			}
 			else if (IsKeyDown(playerKeys[RIGHT]))
 			{
+				PlayMusicStream(engineRun);
+				UpdateMusicStream(engineRun);
+				StopMusicStream(engineRunOff);
+				StopMusicStream(engineReverse);
+
 				player.rotation = 90;
 				playerAccelerationRight = playerAccelerationRight + 0.25f;
 
@@ -173,6 +189,11 @@ namespace Juego
 			}
 			else if (IsKeyDown(playerKeys[LEFT]))
 			{
+				PlayMusicStream(engineRun);
+				UpdateMusicStream(engineRun);
+				StopMusicStream(engineRunOff);
+				StopMusicStream(engineReverse);
+
 				player.rotation = 270;
 				playerAccelerationLeft = playerAccelerationLeft + 0.25f;
 
@@ -186,18 +207,55 @@ namespace Juego
 			}
 			else 
 			{
+				
+				StopMusicStream(engineMax);
+				StopMusicStream(engineRun);
+				StopMusicStream(engineReverse);
 
-				if(playerAccelerationLeft <= 0) playerAccelerationLeft = 0;
-				else playerAccelerationLeft = playerAccelerationLeft - 0.25f;
+				if (playerAccelerationLeft <= 0)
+				{
+					playerAccelerationLeft = 0;
+				}
+				else
+				{
+					PlayMusicStream(engineRunOff);
+					UpdateMusicStream(engineRunOff);
+					
+					playerAccelerationLeft = playerAccelerationLeft - 0.25f;
+				}
 
-				if (playerAccelerationRight <= 0) playerAccelerationRight = 0;
-				else playerAccelerationRight = playerAccelerationRight - 0.25f;
+				if (playerAccelerationRight <= 0)
+				{
+					playerAccelerationRight = 0;
+				}
+				else
+				{
+					PlayMusicStream(engineRunOff);
+					UpdateMusicStream(engineRunOff);
+					playerAccelerationRight = playerAccelerationRight - 0.25f;
+				}
 
-				if (playerAccelerationUp <= 0) playerAccelerationUp = 0;
-				else playerAccelerationUp = playerAccelerationUp - 0.25f;
+				if (playerAccelerationUp <= 0)
+				{
+					playerAccelerationUp = 0;
+				}
+				else
+				{
+					PlayMusicStream(engineRunOff);
+					UpdateMusicStream(engineRunOff);
+					playerAccelerationUp = playerAccelerationUp - 0.25f;
+				}
 
-				if (playerAccelerationDown <= 0) playerAccelerationDown = 0;
-				else playerAccelerationDown = playerAccelerationDown - 0.25f;
+				if (playerAccelerationDown <= 0)
+				{
+					playerAccelerationDown = 0;
+				}
+				else
+				{
+					PlayMusicStream(engineRunOff);
+					UpdateMusicStream(engineRunOff);
+					playerAccelerationDown = playerAccelerationDown - 0.25f;
+				}
 			}
 		}
 
@@ -205,7 +263,7 @@ namespace Juego
 		{
 			for (int i = maxGarbageBoxes; i >= 0; i--)
 			{
-				if (garbageBox[i].alreadyOnPlayer && garbageBox[i].isOnPlayer)
+				if (garbageBox[i].alreadyOnPlayer && garbageBox[i].isOnPlayer && garbageBox[i].isAlive)
 				{
 					if (player.rotation == 180 && moveUp)
 					{
@@ -282,82 +340,8 @@ namespace Juego
 			}
 		}
 
-		/*void checkImpulseBoxUp()
-		{
-			for (int i = maxGarbageBoxes; i >= 0; i--)
-			{
-				if (garbageBox[i].alreadyOnPlayer && garbageBox[i].isOnPlayer)
-				{
-					if (player.rotation == 180 && moveUp)
-					{
-						garbageBox[i].moveUp = true;
-						garbageBox[i].isOnPlayer = false;
-						garbageBox[i].alreadyOnPlayer = false;
-						garbageBox[i].AccelerationUp = playerAccelerationDown * 2.0f;
-						i = -1;
-					}
-				}
-			}	
-		}
-
-		void checkImpulseBoxDown()
-		{
-			for (int i = maxGarbageBoxes; i >= 0; i--)
-			{
-				if (garbageBox[i].alreadyOnPlayer && garbageBox[i].isOnPlayer)
-				{
-					if (player.rotation == 0 && moveDown)
-					{
-						garbageBox[i].moveDown = true;
-						garbageBox[i].isOnPlayer = false;
-						garbageBox[i].alreadyOnPlayer = false;
-						garbageBox[i].AccelerationDown = playerAccelerationUp * 2.0f;
-						i = -1;
-					}
-				}
-			}
-		}
-
-		void checkImpulseBoxLeft()
-		{
-			for (int i = maxGarbageBoxes; i >= 0; i--)
-			{
-				if (garbageBox[i].alreadyOnPlayer && garbageBox[i].isOnPlayer)
-				{
-					if (player.rotation == 270 && moveLeft)
-					{
-						garbageBox[i].moveLeft = true;
-						garbageBox[i].isOnPlayer = false;
-						garbageBox[i].alreadyOnPlayer = false;
-						garbageBox[i].AccelerationLeft = playerAccelerationRight * 2.0f;
-						i = -1;
-					}
-				}
-			}			
-		}
-
-		void checkImpulseBoxRight()
-		{
-			for (int i = maxGarbageBoxes; i >= 0; i--)
-			{
-				if (garbageBox[i].alreadyOnPlayer && garbageBox[i].isOnPlayer)
-				{
-					if (player.rotation == 90 && moveRight)
-					{
-						garbageBox[i].moveRight = true;
-						garbageBox[i].isOnPlayer = false;
-						garbageBox[i].alreadyOnPlayer = false;
-						garbageBox[i].AccelerationRight = playerAccelerationLeft * 2.0f;
-						i = -1;
-					}
-				}
-			}		
-		}*/
-
 		void playerUpdate()
 		{
-			
-			
 			for (int i = 0; i < maxGarbageBoxes; i++)
 			{
 
@@ -375,8 +359,6 @@ namespace Juego
 					garbageBox[i].isOnPlayer = false;
 					garbageBox[i].alreadyOnPlayer = false;
 				}
-
-				//if (garbageBox[i].alreadyOnPlayer && (moveUp || moveDown || moveLeft || moveRight)) lastBoxCollected = i;
 			}
 
 			playerhitbox.position.x += playerAccelerationRight * GetFrameTime();
@@ -389,12 +371,142 @@ namespace Juego
 			playerfront.position.y = playerhitbox.position.y + collisionFix;
 			playerfront.position.x = playerhitbox.position.x + collisionFix;
 
-			if (playerAccelerationLeft >= player.defaultSpeed) playerAccelerationLeft = player.defaultSpeed;
-			if (playerAccelerationRight >= player.defaultSpeed) playerAccelerationRight = player.defaultSpeed;
-			if (playerAccelerationDown >= player.defaultSpeed) playerAccelerationDown = player.defaultSpeed;
-			if (playerAccelerationUp >= player.defaultSpeed) playerAccelerationUp = player.defaultSpeed;
+			if (playerAccelerationLeft >= player.defaultSpeed)
+			{
+				if (!(IsMusicPlaying(engineReverse)))
+				{
+					PlayMusicStream(engineMax);
+					UpdateMusicStream(engineMax);
+					StopMusicStream(engineRunOff);
+					StopMusicStream(engineRun);
+				}
+				playerAccelerationLeft = player.defaultSpeed;
+			}
+			if (playerAccelerationRight >= player.defaultSpeed)
+			{
+				if (!(IsMusicPlaying(engineReverse)))
+				{
+					PlayMusicStream(engineMax);
+					UpdateMusicStream(engineMax);
+					StopMusicStream(engineRunOff);
+					StopMusicStream(engineRun);
+				}
+				playerAccelerationRight = player.defaultSpeed;
+			}
+			if (playerAccelerationDown >= player.defaultSpeed)
+			{
+				if (!(IsMusicPlaying(engineReverse)))
+				{
+					PlayMusicStream(engineMax);
+					UpdateMusicStream(engineMax);
+					StopMusicStream(engineRunOff);
+					StopMusicStream(engineRun);
+				}
+				playerAccelerationDown = player.defaultSpeed;
+			}
+			if (playerAccelerationUp >= player.defaultSpeed)
+			{
+				if (!(IsMusicPlaying(engineReverse)))
+				{
+					PlayMusicStream(engineMax);
+					UpdateMusicStream(engineMax);
+					StopMusicStream(engineRunOff);
+					StopMusicStream(engineRun);
+				}
+				playerAccelerationUp = player.defaultSpeed;
+			}
 
 			//////////////////////////////////--------------------------
+
+			if (CheckCollisionRecs({ playerhitbox.position.x,playerhitbox.position.y,playerhitbox.size.x,playerhitbox.size.y }, { fanArea1.pos.x ,fanArea1.pos.y,fanArea1.size.x,fanArea1.size.y }))
+			{
+				playerhitbox.position.y -= 25.0f * GetFrameTime();
+			}
+
+			if (CheckCollisionRecs({ playerhitbox.position.x,playerhitbox.position.y,playerhitbox.size.x,playerhitbox.size.y }, { fanArea2.pos.x ,fanArea2.pos.y,fanArea2.size.x,fanArea2.size.y }))
+			{
+				playerhitbox.position.y += 25.0f * GetFrameTime();
+			}
+
+			if (CheckCollisionCircleRec(demo.pos, demo.radius, { playerhitbox.position.x,playerhitbox.position.y,playerhitbox.size.x,playerhitbox.size.y }))
+			{
+				if (playerhitbox.position.x + playerhitbox.size.x > demo.pos.x - demo.radius && playerhitbox.position.x + playerhitbox.size.x < demo.pos.x && playerhitbox.position.y + playerhitbox.size.y > demo.pos.y - demo.radius + 0.5f && playerhitbox.position.y < demo.pos.y + demo.radius - 0.5f)
+				{
+					moveLeft = true;
+					checkImpulseBox();
+					if (!(currentlyTouching))
+					{
+						PlaySound(crash);
+						garbageBoxesCollected--;
+						player.lives--;
+						currentlyTouching = true;
+					}
+
+					playerAccelerationLeft = playerAccelerationRight;
+
+					playerAccelerationRight = 0;
+					player.position.x = demo.pos.x - demo.radius - player.size.x + collisionFix2;
+					playerhitbox.position.x = demo.pos.x - demo.radius - playerhitbox.size.x;
+				}
+
+
+				if (playerhitbox.position.x < demo.pos.x + demo.radius && playerhitbox.position.x > demo.pos.x && playerhitbox.position.y + playerhitbox.size.y > demo.pos.y - demo.radius + 0.5f && playerhitbox.position.y < demo.pos.y + demo.radius - 0.5f)
+				{
+					moveRight = true;
+					checkImpulseBox();
+					if (!(currentlyTouching))
+					{
+						PlaySound(crash);
+						garbageBoxesCollected--;
+						player.lives--;
+						currentlyTouching = true;
+					}
+
+					playerAccelerationRight = playerAccelerationLeft;
+
+					playerAccelerationLeft = 0;
+
+					player.position.x = demo.pos.x + demo.radius + collisionFix;
+					playerhitbox.position.x = demo.pos.x + demo.radius;
+				}
+
+				if (playerhitbox.position.y + playerhitbox.size.y > demo.pos.y - demo.radius && playerhitbox.position.y + playerhitbox.size.y < demo.pos.y && playerhitbox.position.x + playerhitbox.size.x > demo.pos.x - demo.radius + 0.1f && playerhitbox.position.x < demo.pos.x + demo.radius - 0.1f)
+				{
+					moveUp = true;
+					checkImpulseBox();
+					if (!(currentlyTouching))
+					{
+						PlaySound(crash);
+						garbageBoxesCollected--;
+						player.lives--;
+						currentlyTouching = true;
+					}
+					playerAccelerationUp = playerAccelerationDown;
+
+					playerAccelerationDown = 0;
+					player.position.y = demo.pos.y - demo.radius - player.size.y + collisionFix;
+					playerhitbox.position.y = demo.pos.y - demo.radius - playerhitbox.size.y;
+				}
+
+
+				if (playerhitbox.position.y <= demo.pos.y + demo.radius && playerhitbox.position.y > demo.pos.y && playerhitbox.position.x + playerhitbox.size.x > demo.pos.x - demo.radius + 0.1f && playerhitbox.position.x < demo.pos.x + demo.radius - 0.1f)
+				{
+					moveDown = true;
+					checkImpulseBox();
+					if (!(currentlyTouching))
+					{
+						PlaySound(crash);
+						garbageBoxesCollected--;
+						player.lives--;
+						currentlyTouching = true;
+					}
+					playerAccelerationDown = playerAccelerationUp;
+
+					playerAccelerationUp = 0;
+					player.position.y = demo.pos.y + demo.radius + collisionFix;
+					playerhitbox.position.y = demo.pos.y + demo.radius;
+				}
+			}
 
 			for (int i = 0; i < maxObstacles; i++)
 			{
@@ -406,7 +518,9 @@ namespace Juego
 						checkImpulseBox();
 						if (!(currentlyTouching))
 						{
+							PlaySound(crash);
 							garbageBoxesCollected--;
+							player.lives--;
 							currentlyTouching = true;
 						}
 
@@ -423,7 +537,9 @@ namespace Juego
 						checkImpulseBox();
 						if (!(currentlyTouching))
 						{
+							PlaySound(crash);
 							garbageBoxesCollected--;
+							player.lives--;
 							currentlyTouching = true;
 						}
 
@@ -441,7 +557,9 @@ namespace Juego
 						checkImpulseBox();
 						if (!(currentlyTouching))
 						{
+							PlaySound(crash);
 							garbageBoxesCollected--;
+							player.lives--;
 							currentlyTouching = true;
 						}
 						playerAccelerationUp = playerAccelerationDown;
@@ -457,7 +575,9 @@ namespace Juego
 						checkImpulseBox();
 						if (!(currentlyTouching))
 						{
+							PlaySound(crash);
 							garbageBoxesCollected--;
+							player.lives--;
 							currentlyTouching = true;
 						}
 						playerAccelerationDown = playerAccelerationUp;
@@ -471,9 +591,11 @@ namespace Juego
 				}
 				else
 				{
-					player.textureTint = GRAY;
-					currentlyTouching = false;
+					
 				}
+
+				player.textureTint = GRAY;
+				currentlyTouching = false;
 
 				for (int j = 0; j < maxGarbageBoxes; j++)
 				{
@@ -620,7 +742,9 @@ namespace Juego
 				checkImpulseBox();
 				if (!(currentlyTouching))
 				{
+					PlaySound(crash);
 					garbageBoxesCollected--;
+					player.lives--;
 					currentlyTouching = true;
 				}
 				playerAccelerationUp = playerAccelerationDown;
@@ -636,7 +760,9 @@ namespace Juego
 				checkImpulseBox();
 				if (!(currentlyTouching))
 				{
+					PlaySound(crash);
 					garbageBoxesCollected--;
+					player.lives--;
 					currentlyTouching = true;
 				}
 				playerAccelerationDown = playerAccelerationUp;
@@ -652,7 +778,9 @@ namespace Juego
 				checkImpulseBox();
 				if (!(currentlyTouching))
 				{
+					PlaySound(crash);
 					garbageBoxesCollected--;
+					player.lives--;
 					currentlyTouching = true;
 				}
 				playerAccelerationLeft = playerAccelerationRight;
@@ -668,7 +796,9 @@ namespace Juego
 				checkImpulseBox();
 				if (!(currentlyTouching))
 				{
+					PlaySound(crash);
 					garbageBoxesCollected--;
+					player.lives--;
 					currentlyTouching = true;
 				}
 				playerAccelerationRight = playerAccelerationLeft;

@@ -23,8 +23,15 @@ namespace Juego
 		MAX
 	};
 
+
 	extern bool gameON;
 	extern int playerKeys[MAX];
+	extern int garbagePoints;
+	extern Music engineMax;
+	extern Music engineRun;
+	extern Music engineRunOff;
+	extern Music engineReverse;
+	extern Sound crash;
 
 	namespace Gameplay_Section
 	{

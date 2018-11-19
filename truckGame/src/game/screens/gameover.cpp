@@ -139,14 +139,14 @@ namespace Juego
 			DrawTextEx(sideFont, "RESTART", { buttons[0].position.x + 10, buttons[0].position.y + 5 }, defaultFontSize / 1.3, 1.0f, buttons[0].defaultColor);
 			DrawTextEx(sideFont, "MENU", { buttons[1].position.x + 10, buttons[1].position.y + 5 }, defaultFontSize / 1.3, 1.0f, buttons[1].defaultColor);
 
-			//if (targetsLeft == 0 && player.isAlive)
-			//{
-			//	DrawTextEx(mainFont, "MISSION SUCCESSFUL", { buttons[0].position.x - screenWidth/5.0f, buttons[0].position.y - 60 }, defaultFontSize / 1.2, 1.0f, GOLD);
-			//}
-			//else
-			//{
-			//	DrawTextEx(mainFont, "MISSION FAILED", { buttons[0].position.x - screenWidth / 10.0f, buttons[0].position.y - 60 }, defaultFontSize / 1.2, 1.0f, GREEN);
-			//}
+			if (garbagePoints >= 6 && player.lives >= 1)
+			{
+				DrawTextEx(mainFont, "MISSION SUCCESSFUL", { buttons[0].position.x - screenWidth/5.0f, buttons[0].position.y - 60 }, defaultFontSize / 1.2, 1.0f, GOLD);
+			}
+			else
+			{
+				DrawTextEx(mainFont, "MISSION FAILED", { buttons[0].position.x - screenWidth / 10.0f, buttons[0].position.y - 60 }, defaultFontSize / 1.2, 1.0f, GREEN);
+			}
 			
 		}
 

@@ -74,7 +74,7 @@ namespace Juego
 
 		createMouse();
 
-		InitWindow(screenWidth, screenHeight, "Simple! Gradius");
+		InitWindow(screenWidth, screenHeight, "Truck Game");
 
 		mainFont = LoadFont("res/assets/fonts/bigmacca.ttf");
 		sideFont = LoadFont("res/assets/fonts/Reality_Pursuit_NC.ttf");
@@ -86,6 +86,8 @@ namespace Juego
 		playerKeys[LEFT] = KEY_LEFT;
 		playerKeys[RIGHT] = KEY_RIGHT;
 		playerKeys[REVERSE] = KEY_SPACE;
+
+		InitAudioDevice();
 
 		#ifdef AUDIO
 		InitAudioDevice();
@@ -279,6 +281,7 @@ namespace Juego
 		UnloadMusicStream(song_invasion);
 		CloseAudioDevice();
 #endif
+		CloseAudioDevice();
 		UnloadFont(mainFont);
 		UnloadFont(sideFont);
 		CloseWindow();

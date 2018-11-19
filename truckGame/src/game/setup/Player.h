@@ -11,6 +11,7 @@ namespace Juego
 		Vector2 size;
 		int rotation;
 		float defaultSpeed;
+		int lives;
 		Vector2 centre;
 		bool isAlive;
 		bool inputActive;

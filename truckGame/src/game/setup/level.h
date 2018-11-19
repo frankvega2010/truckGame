@@ -1,7 +1,11 @@
 #ifndef LEVEL_H
 #define LEVEL_H
 
+#include <iostream>
+
 #include "raylib.h"
+
+using namespace std;
 
 namespace Juego
 {
@@ -19,6 +23,7 @@ namespace Juego
 		obMiddleSquare9,
 		obMiddleSquare10,
 		obDumpster,
+		craneBase,
 		maxObstacles
 	};
 
@@ -42,22 +47,36 @@ namespace Juego
 		bool moveDown;
 	};
 
-	const int maxSpikes = 5;
+	struct Pendulum
+	{
+		float radius;
+		Rectangle arm;
+		Color color;
+		Vector2 pos;
+		float length;
+		float angle;
+		float aVel;
+		float aAcc;
+		float angle2;
+	};
+
 	extern int currentLevel;
 	extern int garbageBoxesCollected;
-	//extern obstacle levelBackground;
-	//extern obstacle levelMiddleSquare;
+
 	extern obstacle obBackground;
 	extern obstacle obstacles[maxObstacles];
-	extern obstacle spikes[maxSpikes];
-	extern obstacle exit;
 	extern obstacle garbageBox[maxGarbageBoxes];
+	extern obstacle fanArea1;
+	extern obstacle fanArea2;
+	extern Pendulum demo;
 
 	namespace Gameplay_Section
 	{
 		void createLevelBackground();
 		void createLevelObstacles();
+		void updatePendulum();
 		void DrawLevel();
+		void DrawArm();
 	}
 }
 
