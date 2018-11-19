@@ -230,6 +230,7 @@ namespace Juego
 							garbageBox[i].isAlive = false;
 							garbageBoxesCollected--;
 							garbagePoints++;
+							player.lives++;
 						}
 					}
 

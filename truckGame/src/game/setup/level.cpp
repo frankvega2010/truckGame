@@ -33,7 +33,7 @@ namespace Juego
 			arm.x = screenWidth / 2 - 3;
 			arm.y = screenHeight / 2 - 7;
 			demo.color = BLACK;
-			demo.radius = 0;
+			demo.radius = 40;
 			demo.pos = { (float)GetScreenWidth() / 2,(float)GetScreenHeight() / 2 };
 			demo.angle = PI / 4;
 			demo.angle2 = 7 * PI / 4;
@@ -192,28 +192,27 @@ namespace Juego
 
 		void updatePendulum()
 		{
-			bool aux = false;
-			demo.pos.y = (float)GetScreenHeight() / 2 + demo.length*sin(demo.angle);
+			//demo.pos.y = (float)GetScreenHeight() / 2 + demo.length*sin(demo.angle);
 
-			demo.aAcc = -0.0002*sin(demo.angle)*GetFrameTime();
+			//demo.aAcc = -0.0000002*sin(demo.angle);
 
-			demo.angle += demo.aVel*GetFrameTime() * 3000;
-			demo.angle2 += demo.aVel*GetFrameTime() * 3000;
-			demo.aVel += demo.aAcc*GetFrameTime() * 3000;
+			//demo.angle += demo.aVel;
+			//demo.angle2 += demo.aVel;
+			//demo.aVel += demo.aAcc;
 
-			//cout << demo.aVel << endl;
-			if (demo.aVel>0.00018 || demo.aVel<-0.00018)
-			{
-				float auxradio;
-				auxradio = demo.radius;
-				demo.radius = auxradio;
-				demo.color = BLACK;
-			}
-			else
-			{
-				demo.radius = 0 + demo.length*cos(demo.angle2)*(0.2);
-				//demo.color = Fade(RED, 0.7f);
-			}
+			////cout << demo.aVel << endl;
+			//if (demo.aVel>0.00018 || demo.aVel<-0.00018)
+			//{
+			//	float auxradio;
+			//	auxradio = demo.radius;
+			//	demo.radius = auxradio;
+			//	demo.color = BLACK;
+			//}
+			//else
+			//{
+			//	demo.radius = 0 + demo.length*cos(demo.angle2)*(0.2);
+			//	//demo.color = Fade(RED, 0.7f);
+			//}
 				
 		}
 
