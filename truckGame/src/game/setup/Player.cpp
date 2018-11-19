@@ -61,7 +61,7 @@ namespace Juego
 			player.inputActive = false;
 			player.rotation = 0;
 			player.textureTint = DARKGRAY;
-			player.lives = 10;
+			player.lives = 5;
 			playerhitbox.isAlive = true;
 			playerhitbox.inputActive = false;
 			playerhitbox.rotation = 0;
