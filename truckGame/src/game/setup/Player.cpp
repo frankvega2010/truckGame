@@ -38,7 +38,7 @@ namespace Juego
 			{
 				player.size = { 80, 100 };
 				playerhitbox.size = { 100, 100 };
-				player.defaultSpeed = 500.0f;
+				player.defaultSpeed = 900.0f;
 				playerfront.size = { 80, 30 };
 				collisionFix = player.size.y/2;
 				collisionFix2 = 30;
@@ -46,7 +46,7 @@ namespace Juego
 			else if (resolutionSmall) 
 			{
 				player.size = { 50 / resolutionSizeFix, 50 / resolutionSizeFix };
-				player.defaultSpeed = 500.0f / resolutionSizeFix;
+				player.defaultSpeed = 900.0f / resolutionSizeFix;
 				player.centre = { player.size.x / 2,player.size.y / 2 };
 			}
 			if (currentLevel == 0)
@@ -83,54 +83,54 @@ namespace Juego
 
 				if (player.rotation == 90)
 				{
-					playerAccelerationLeft = playerAccelerationLeft + 0.25f;
+					playerAccelerationLeft = playerAccelerationLeft + 900.0f * GetFrameTime();
 
 					if (playerAccelerationRight <= 0) playerAccelerationRight = 0;
-					else playerAccelerationRight = playerAccelerationRight - 0.25f;
+					else playerAccelerationRight = playerAccelerationRight - 900.0f * GetFrameTime();
 
 					if (playerAccelerationUp <= 0) playerAccelerationUp = 0;
-					else playerAccelerationUp = playerAccelerationUp - 0.35f;
+					else playerAccelerationUp = playerAccelerationUp - 1200.0f * GetFrameTime();
 					if (playerAccelerationDown <= 0) playerAccelerationDown = 0;
-					else playerAccelerationDown = playerAccelerationDown - 0.35f;
+					else playerAccelerationDown = playerAccelerationDown - 1200.0f * GetFrameTime();
 				}
 
 				if (player.rotation == 270)
 				{
-					playerAccelerationRight = playerAccelerationRight + 0.25f;
+					playerAccelerationRight = playerAccelerationRight + 900.0f * GetFrameTime();
 
 					if (playerAccelerationLeft <= 0) playerAccelerationLeft = 0;
-					else playerAccelerationLeft = playerAccelerationLeft - 0.25f;
+					else playerAccelerationLeft = playerAccelerationLeft - 900.0f * GetFrameTime();
 
 					if (playerAccelerationUp <= 0) playerAccelerationUp = 0;
-					else playerAccelerationUp = playerAccelerationUp - 0.35f;
+					else playerAccelerationUp = playerAccelerationUp - 1200.0f  * GetFrameTime();
 					if (playerAccelerationDown <= 0) playerAccelerationDown = 0;
-					else playerAccelerationDown = playerAccelerationDown - 0.35f;
+					else playerAccelerationDown = playerAccelerationDown - 1200.0f * GetFrameTime();
 				}
 
 				if (player.rotation == 180)
 				{
-					playerAccelerationUp = playerAccelerationUp + 0.25f;
+					playerAccelerationUp = playerAccelerationUp + 900.0f * GetFrameTime();
 
 					if (playerAccelerationDown <= 0) playerAccelerationDown = 0;
-					else playerAccelerationDown = playerAccelerationDown - 0.25f;
+					else playerAccelerationDown = playerAccelerationDown - 900.0f * GetFrameTime();
 
 					if (playerAccelerationLeft <= 0) playerAccelerationLeft = 0;
-					else playerAccelerationLeft = playerAccelerationLeft - 0.35f;
+					else playerAccelerationLeft = playerAccelerationLeft - 1200.0f * GetFrameTime();
 					if (playerAccelerationRight <= 0) playerAccelerationRight = 0;
-					else playerAccelerationRight = playerAccelerationRight - 0.35f;
+					else playerAccelerationRight = playerAccelerationRight - 1200.0f * GetFrameTime();
 				}
 
 				if (player.rotation == 0)
 				{
-					playerAccelerationDown = playerAccelerationDown + 0.25f;
+					playerAccelerationDown = playerAccelerationDown + 900.0f * GetFrameTime();
 
 					if (playerAccelerationUp <= 0) playerAccelerationUp = 0;
-					else playerAccelerationUp = playerAccelerationUp - 0.25f;
+					else playerAccelerationUp = playerAccelerationUp - 900.0f * GetFrameTime();
 
 					if (playerAccelerationLeft <= 0) playerAccelerationLeft = 0;
-					else playerAccelerationLeft = playerAccelerationLeft - 0.35f;
+					else playerAccelerationLeft = playerAccelerationLeft - 1200.0f * GetFrameTime();
 					if (playerAccelerationRight <= 0) playerAccelerationRight = 0;
-					else playerAccelerationRight = playerAccelerationRight - 0.35f;
+					else playerAccelerationRight = playerAccelerationRight - 1200.0f * GetFrameTime();
 				}
 			}
 			else if (IsKeyDown(playerKeys[UP]))
@@ -141,15 +141,15 @@ namespace Juego
 				StopMusicStream(engineReverse);
 
 					player.rotation = 0;
-					playerAccelerationUp = playerAccelerationUp + 0.25f;
+					playerAccelerationUp = playerAccelerationUp + 900.0f * GetFrameTime();
 
 					if (playerAccelerationDown <= 0) playerAccelerationDown = 0;
-					else playerAccelerationDown = playerAccelerationDown - 0.25f;
+					else playerAccelerationDown = playerAccelerationDown - 900.0f * GetFrameTime();
 					
 					if (playerAccelerationLeft <= 0) playerAccelerationLeft = 0;
-					else playerAccelerationLeft = playerAccelerationLeft - 0.35f;
+					else playerAccelerationLeft = playerAccelerationLeft - 1200.0f * GetFrameTime();
 					if (playerAccelerationRight <= 0) playerAccelerationRight = 0;
-					else playerAccelerationRight = playerAccelerationRight - 0.35f;					
+					else playerAccelerationRight = playerAccelerationRight - 1200.0f * GetFrameTime();
 			}
 			else if (IsKeyDown(playerKeys[DOWN]))
 			{
@@ -159,33 +159,34 @@ namespace Juego
 				StopMusicStream(engineReverse);
 
 					player.rotation = 180;
-					playerAccelerationDown = playerAccelerationDown + 0.25f;
+					playerAccelerationDown = playerAccelerationDown + 900.0f * GetFrameTime();
 
 					if (playerAccelerationUp <= 0) playerAccelerationUp = 0;
-					else playerAccelerationUp = playerAccelerationUp - 0.25f;
+					else playerAccelerationUp = playerAccelerationUp - 900.0f * GetFrameTime();
 
 					if (playerAccelerationLeft <= 0) playerAccelerationLeft = 0;
-					else playerAccelerationLeft = playerAccelerationLeft - 0.35f;
+					else playerAccelerationLeft = playerAccelerationLeft - 1200.0f * GetFrameTime();
 					if (playerAccelerationRight <= 0) playerAccelerationRight = 0;
-					else playerAccelerationRight = playerAccelerationRight - 0.35f;
+					else playerAccelerationRight = playerAccelerationRight - 1200.0f * GetFrameTime();
 			}
 			else if (IsKeyDown(playerKeys[RIGHT]))
 			{
+
 				PlayMusicStream(engineRun);
 				UpdateMusicStream(engineRun);
 				StopMusicStream(engineRunOff);
 				StopMusicStream(engineReverse);
 
 				player.rotation = 90;
-				playerAccelerationRight = playerAccelerationRight + 0.25f;
+				playerAccelerationRight = playerAccelerationRight + 900.0f  * GetFrameTime();
 
 				if (playerAccelerationLeft <= 0) playerAccelerationLeft = 0;
-				else playerAccelerationLeft = playerAccelerationLeft - 0.25f;
+				else playerAccelerationLeft = playerAccelerationLeft - 900.0f * GetFrameTime();
 				
 				if (playerAccelerationUp <= 0) playerAccelerationUp = 0;
-				else playerAccelerationUp = playerAccelerationUp - 0.35f;
+				else playerAccelerationUp = playerAccelerationUp - 1200.0f * GetFrameTime();
 				if (playerAccelerationDown <= 0) playerAccelerationDown = 0;
-				else playerAccelerationDown = playerAccelerationDown - 0.35f;
+				else playerAccelerationDown = playerAccelerationDown - 1200.0f * GetFrameTime();
 			}
 			else if (IsKeyDown(playerKeys[LEFT]))
 			{
@@ -195,15 +196,15 @@ namespace Juego
 				StopMusicStream(engineReverse);
 
 				player.rotation = 270;
-				playerAccelerationLeft = playerAccelerationLeft + 0.25f;
+				playerAccelerationLeft = playerAccelerationLeft + 900.0f * GetFrameTime();
 
 				if (playerAccelerationRight <= 0) playerAccelerationRight = 0;
-				else playerAccelerationRight = playerAccelerationRight - 0.25f;
+				else playerAccelerationRight = playerAccelerationRight - 900.0f * GetFrameTime();
 
 				if (playerAccelerationUp <= 0) playerAccelerationUp = 0;
-				else playerAccelerationUp = playerAccelerationUp - 0.35f;
+				else playerAccelerationUp = playerAccelerationUp - 1200.0f * GetFrameTime();
 				if (playerAccelerationDown <= 0) playerAccelerationDown = 0;
-				else playerAccelerationDown = playerAccelerationDown - 0.35f;
+				else playerAccelerationDown = playerAccelerationDown - 1200.0f * GetFrameTime();
 			}
 			else 
 			{
@@ -221,7 +222,7 @@ namespace Juego
 					PlayMusicStream(engineRunOff);
 					UpdateMusicStream(engineRunOff);
 					
-					playerAccelerationLeft = playerAccelerationLeft - 0.25f;
+					playerAccelerationLeft = playerAccelerationLeft - 900.0f * GetFrameTime();
 				}
 
 				if (playerAccelerationRight <= 0)
@@ -232,7 +233,7 @@ namespace Juego
 				{
 					PlayMusicStream(engineRunOff);
 					UpdateMusicStream(engineRunOff);
-					playerAccelerationRight = playerAccelerationRight - 0.25f;
+					playerAccelerationRight = playerAccelerationRight - 900.0f * GetFrameTime();
 				}
 
 				if (playerAccelerationUp <= 0)
@@ -243,7 +244,7 @@ namespace Juego
 				{
 					PlayMusicStream(engineRunOff);
 					UpdateMusicStream(engineRunOff);
-					playerAccelerationUp = playerAccelerationUp - 0.25f;
+					playerAccelerationUp = playerAccelerationUp - 900.0f * GetFrameTime();
 				}
 
 				if (playerAccelerationDown <= 0)
@@ -254,7 +255,7 @@ namespace Juego
 				{
 					PlayMusicStream(engineRunOff);
 					UpdateMusicStream(engineRunOff);
-					playerAccelerationDown = playerAccelerationDown - 0.25f;
+					playerAccelerationDown = playerAccelerationDown - 900.0f * GetFrameTime();
 				}
 			}
 		}
@@ -365,6 +366,8 @@ namespace Juego
 			playerhitbox.position.x -= playerAccelerationLeft * GetFrameTime();
 			playerhitbox.position.y += playerAccelerationDown * GetFrameTime();
 			playerhitbox.position.y -= playerAccelerationUp * GetFrameTime();
+
+			
 
 			player.position.y = playerhitbox.position.y + collisionFix; //+ collisionFix;
 			player.position.x = playerhitbox.position.x + collisionFix; //+ collisionFix;
@@ -633,7 +636,7 @@ namespace Juego
 					moveRight = false;
 					playerAccelerationRight = 0;
 				}
-				else playerAccelerationRight = playerAccelerationRight - 0.25f;
+				else playerAccelerationRight = playerAccelerationRight - 900.0f * GetFrameTime();
 			}
 
 			if (moveLeft)
@@ -643,7 +646,7 @@ namespace Juego
 					moveLeft = false;
 					playerAccelerationLeft = 0;
 				}
-				else playerAccelerationLeft = playerAccelerationLeft - 0.25f;
+				else playerAccelerationLeft = playerAccelerationLeft - 900.0f * GetFrameTime();
 			}
 
 			if (moveUp)
@@ -653,7 +656,7 @@ namespace Juego
 					moveUp = false;
 					playerAccelerationUp = 0;
 				}
-				else playerAccelerationUp = playerAccelerationUp - 0.25f;
+				else playerAccelerationUp = playerAccelerationUp - 900.0f * GetFrameTime();
 			}
 
 			if (moveDown)
@@ -663,7 +666,7 @@ namespace Juego
 					moveDown = false;
 					playerAccelerationDown = 0;
 				}
-				else playerAccelerationDown = playerAccelerationDown - 0.25f;
+				else playerAccelerationDown = playerAccelerationDown - 900.0f * GetFrameTime();
 			}
 
 			for (int i = 0; i < maxGarbageBoxes; i++)
@@ -675,7 +678,7 @@ namespace Juego
 						garbageBox[i].moveRight = false;
 						garbageBox[i].AccelerationRight = 0;
 					}
-					else garbageBox[i].AccelerationRight = garbageBox[i].AccelerationRight - 0.35f;
+					else garbageBox[i].AccelerationRight = garbageBox[i].AccelerationRight - 1200.0f * GetFrameTime();
 				}
 
 				if (garbageBox[i].moveLeft)
@@ -686,7 +689,7 @@ namespace Juego
 						garbageBox[i].moveLeft = false;
 						garbageBox[i].AccelerationLeft = 0;
 					}
-					else garbageBox[i].AccelerationLeft = garbageBox[i].AccelerationLeft - 0.35f;
+					else garbageBox[i].AccelerationLeft = garbageBox[i].AccelerationLeft - 1200.0f * GetFrameTime();
 				}
 
 				if (garbageBox[i].moveUp)
@@ -696,7 +699,7 @@ namespace Juego
 						garbageBox[i].moveUp = false;
 						garbageBox[i].AccelerationUp = 0;
 					}
-					else garbageBox[i].AccelerationUp = garbageBox[i].AccelerationUp - 0.35f;
+					else garbageBox[i].AccelerationUp = garbageBox[i].AccelerationUp - 1200.0f * GetFrameTime();
 				}
 
 				if (garbageBox[i].moveDown)
@@ -706,7 +709,7 @@ namespace Juego
 						garbageBox[i].moveDown = false;
 						garbageBox[i].AccelerationDown = 0;
 					}
-					else garbageBox[i].AccelerationDown = garbageBox[i].AccelerationDown - 0.35f;
+					else garbageBox[i].AccelerationDown = garbageBox[i].AccelerationDown - 1200.0f * GetFrameTime();
 				}
 			}
 
