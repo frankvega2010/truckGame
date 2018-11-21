@@ -35,7 +35,7 @@ You are a dump truck, your objective is to pickup the garbage bags and leave it 
 ### IMPORTANT: v0.75 is the last version of the game, if you feel that in v0.7 the game goes too slow you will need to try this version.
 
 
-- Link for V0.75:
+- Link for V0.75: https://github.com/frankvega2010/truckGame/releases/tag/v0.75
 
 - Link for V0.7: https://github.com/frankvega2010/truckGame/releases/tag/v0.7
 
